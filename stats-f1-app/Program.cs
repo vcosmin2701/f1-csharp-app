@@ -1,4 +1,5 @@
-﻿using System;
+﻿using stats_f1_app;
+using System;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -12,30 +13,9 @@ namespace Program
 		{
 			using (HttpClient client = new HttpClient())
 			{
-				try
-				{
-					string baseUrl = "https://ergast.com/api/f1/";
-					string endpoint = "2024/2/results.json";
-					string url = $"{baseUrl}{endpoint}";
-
-					HttpResponseMessage response = await client.GetAsync(url);
-
-					if (response.IsSuccessStatusCode)
-					{
-						var jsonContent = await response.Content.ReadFromJsonAsync<JsonElement>();
-						var options = new JsonSerializerOptions { WriteIndented = true };
-						string jsonString = JsonSerializer.Serialize(jsonContent, options);
-						Console.WriteLine(jsonString);
-					}
-					else
-					{
-						Console.WriteLine($"Error: {response.StatusCode} - {response.ReasonPhrase}");
-					}
-				}
-				catch (Exception ex)
-				{
-					Console.WriteLine($"Error: {ex.Message}");
-				}
+				Formula1ApiClient apiClient = new Formula1ApiClient(client);
+				var result = await apiClient.GetRaceResultAsync("2024", "2");
+				Console.WriteLine(result);
 			}
 		}
 	}
